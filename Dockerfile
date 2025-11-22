@@ -45,4 +45,4 @@ RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
 
 USER mcpuser
 
-ENTRYPOINT ["/app/entrypoint.sh"]()
+ENTRYPOINT ["/app/entrypoint.sh"]
