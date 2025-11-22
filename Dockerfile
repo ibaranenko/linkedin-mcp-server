@@ -18,6 +18,7 @@ COPY . /app
 
 # Sync dependencies and install project
 RUN --mount=type=cache,target=/root/.cache/uv \
+    pip install --no-cache-dir inquirer && \
     uv sync --frozen
 
 # Create a non-root user
@@ -30,12 +31,12 @@ RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
     echo 'set -e' >> /app/entrypoint.sh && \
     echo '' >> /app/entrypoint.sh && \
     echo 'if [ -z "$LINKEDIN_COOKIE" ]; then' >> /app/entrypoint.sh && \
-    echo '  echo "ERROR: LINKEDIN_COOKIE is not set"' >> /app/entrypoint.sh && \
+    echo '  echo "ERROR: LINKEDIN_COOKIE is not set" >&2' >> /app/entrypoint.sh && \
     echo '  exit 1' >> /app/entrypoint.sh && \
     echo 'fi' >> /app/entrypoint.sh && \
     echo '' >> /app/entrypoint.sh && \
-    echo 'echo "Starting LinkedIn MCP Server..."' >> /app/entrypoint.sh && \
-    echo '' >> /app/entrypoint.sh && \
+    # echo 'echo "Starting LinkedIn MCP Server..."' >> /app/entrypoint.sh && \
+    # echo '' >> /app/entrypoint.sh && \
     echo 'if [ "$USE_UV" = "1" ]; then' >> /app/entrypoint.sh && \
     echo '  exec uv run -m linkedin_mcp_server' >> /app/entrypoint.sh && \
     echo 'else' >> /app/entrypoint.sh && \
