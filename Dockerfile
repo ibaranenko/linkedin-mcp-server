@@ -22,8 +22,27 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Create a non-root user
 RUN adduser -D -u 1000 mcpuser && chown -R mcpuser:mcpuser /app
+
+# ----------------------------------------------------------
+# Create entrypoint.sh (only requires LINKEDIN_COOKIE)
+# ----------------------------------------------------------
+RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
+    echo 'set -e' >> /app/entrypoint.sh && \
+    echo '' >> /app/entrypoint.sh && \
+    echo 'if [ -z "$LINKEDIN_COOKIE" ]; then' >> /app/entrypoint.sh && \
+    echo '  echo "ERROR: LINKEDIN_COOKIE is not set"' >> /app/entrypoint.sh && \
+    echo '  exit 1' >> /app/entrypoint.sh && \
+    echo 'fi' >> /app/entrypoint.sh && \
+    echo '' >> /app/entrypoint.sh && \
+    echo 'echo "Starting LinkedIn MCP Server..."' >> /app/entrypoint.sh && \
+    echo '' >> /app/entrypoint.sh && \
+    echo 'if [ "$USE_UV" = "1" ]; then' >> /app/entrypoint.sh && \
+    echo '  exec uv run -m linkedin_mcp_server' >> /app/entrypoint.sh && \
+    echo 'else' >> /app/entrypoint.sh && \
+    echo '  exec python -m linkedin_mcp_server' >> /app/entrypoint.sh && \
+    echo 'fi' >> /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
+
 USER mcpuser
 
-# Set entrypoint and default arguments
-ENTRYPOINT ["uv", "run", "-m", "linkedin_mcp_server"]
-CMD []
+ENTRYPOINT ["/app/entrypoint.sh"]()
