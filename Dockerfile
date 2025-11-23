@@ -9,7 +9,14 @@ RUN apk add --no-cache \
     build-base \
     python3-dev \
     # Required for pyperclip
-    xclip
+    xclip \
+    # Required for keyring
+    dbus \
+    dbus-x11 \
+    # Required for some Python packages
+    libffi-dev \
+    openssl-dev \
+    cargo
 
 # Install uv from official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -25,6 +32,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     pip install --no-cache-dir \
         inquirer \
         pyperclip \
+        keyring \
         git+https://github.com/stickerdaniel/linkedin_scraper.git && \
     uv sync --frozen
 
