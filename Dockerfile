@@ -5,7 +5,11 @@ RUN apk add --no-cache \
     git \
     curl \
     chromium \
-    chromium-chromedriver
+    chromium-chromedriver \
+    build-base \
+    python3-dev \
+    # Required for pyperclip
+    xclip
 
 # Install uv from official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -18,8 +22,10 @@ COPY . /app
 
 # Sync dependencies and install project
 RUN --mount=type=cache,target=/root/.cache/uv \
-    pip install --no-cache-dir inquirer && \
-    pip install --no-cache-dir git+https://github.com/stickerdaniel/linkedin_scraper.git && \
+    pip install --no-cache-dir \
+        inquirer \
+        pyperclip \
+        git+https://github.com/stickerdaniel/linkedin_scraper.git && \
     uv sync --frozen
 
 # Create a non-root user
