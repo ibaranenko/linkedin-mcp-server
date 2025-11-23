@@ -19,6 +19,7 @@ COPY . /app
 # Sync dependencies and install project
 RUN --mount=type=cache,target=/root/.cache/uv \
     pip install --no-cache-dir inquirer && \
+    pip install --no-cache-dir git+https://github.com/stickerdaniel/linkedin_scraper.git && \
     uv sync --frozen
 
 # Create a non-root user
